@@ -9,10 +9,13 @@ class Node {
 }
 
 class MyList {
-  constructor() {
+  constructor(...args) {
     this.head = null;
     this.tail = null;
     this.size = 0;
+    for (const arg of args) {
+      this.append(arg);
+    }
   }
 
   length() {
@@ -48,9 +51,10 @@ class MyList {
         currentNode = currentNode.next;
       }
       node.prev = currentNode.prev;
-      node.next = currentNode.next;
+      node.next = currentNode;
       if (currentNode.prev) currentNode.prev.next = node;
-      if (currentNode.next) currentNode.next.prev = node;
+      if (currentNode.next) currentNode.prev = node;
+      this.size++;
     } else {
       throw new Error('Error. Wrong input data or index');
     }
@@ -105,7 +109,7 @@ class MyList {
       for (let i = 0; i < index; i++) {
         currentNode = currentNode.next;
       }
-      return currentNode;
+      return currentNode.data;
     } else {
       throw new Error('Error. Wrong index');
     }
@@ -125,11 +129,11 @@ class MyList {
     const reverseList = new MyList();
     const size = this.size;
     for (let i = size - 1; i >= 0; i--) {
-      reverseList.append(this.get(i).data);
+      reverseList.append(this.get(i));
     }
     this.clear();
     for (let i = 0; i < size; i++) {
-      this.append(reverseList.get(i).data);
+      this.append(reverseList.get(i));
     }
   }
 
@@ -183,3 +187,5 @@ class MyList {
 
   }
 }
+
+module.exports = MyList;
