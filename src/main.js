@@ -1,40 +1,18 @@
 'use strict';
 
-class Node {
-  constructor(data) {
-    this.data = data;
-    this.next = null;
-    this.prev = null;
-  }
-}
-
 class MyList {
   constructor(...args) {
-    this.head = null;
-    this.tail = null;
-    this.size = 0;
-    for (const arg of args) {
-      this.append(arg);
-    }
+    this.list = [...args];
   }
 
   length() {
-    return this.size;
+    return this.list.length;
   }
 
   append(data) {
     const isString = typeof data === 'string';
     if (isString && data.length === 1) {
-      const node = new Node(data);
-      if (this.size === 0) {
-        this.head = node;
-      }
-      if (this.tail) {
-        node.prev = this.tail;
-        this.tail.next = node;
-      }
-      this.tail = node;
-      this.size++;
+      this.list.push(data);
     } else {
       throw new Error('Error. Wrong input data');
     }
@@ -43,42 +21,18 @@ class MyList {
   insert(data, index) {
     const isString = typeof data === 'string';
     const isLetter = isString && data.length === 1;
-    const correctIndex = (index > 0) && (index < (this.size - 1));
+    const correctIndex = (index >= 0) && (index <= (this.length() - 1));
     if (isLetter && correctIndex) {
-      const node = new Node(data);
-      let currentNode = this.head;
-      for (let i = 0; i < index; i++) {
-        currentNode = currentNode.next;
-      }
-      node.prev = currentNode.prev;
-      node.next = currentNode;
-      if (currentNode.prev) currentNode.prev.next = node;
-      if (currentNode.next) currentNode.prev = node;
-      this.size++;
+      this.list.splice(index, 0, data);
     } else {
       throw new Error('Error. Wrong input data or index');
     }
   }
 
   delete(index) {
-    const corectIndex = (index >= 0) && (index <= (this.size - 1));
+    const corectIndex = (index >= 0) && (index <= (this.length() - 1));
     if (corectIndex) {
-      let currentNode = this.head;
-      for (let i = 0; i < index; i++) {
-        currentNode = currentNode.next;
-      }
-      if (index === 0) {
-        this.head = currentNode.next;
-      } else {
-        currentNode.prev.next = currentNode.next;
-      }
-      if (index === this.size - 1) {
-        this.tail = currentNode.prev;
-      } else {
-        currentNode.next.prev = currentNode.prev;
-      }
-      this.size--;
-      return currentNode.data;
+      return this.list.splice(index, 1)[0];
     } else {
       throw new Error('Error. Wrong index');
     }
@@ -87,14 +41,10 @@ class MyList {
   deleteAll(data) {
     const isString = typeof data === 'string';
     if (isString && data.length === 1) {
-      let currentNode = this.head;
-      for (let i = 0; i < this.size; i++) {
-        if (currentNode.data === data) {
-          currentNode = currentNode.next;
+      for (let i = 0; i < this.length(); i++) {
+        if (this.list[i] === data) {
           this.delete(i);
           i--;
-        } else {
-          currentNode = currentNode.next;
         }
       }
     } else {
@@ -103,49 +53,28 @@ class MyList {
   }
 
   get(index) {
-    const corectIndex = (index >= 0) && (index <= (this.size - 1));
+    const corectIndex = (index >= 0) && (index <= (this.length() - 1));
     if (corectIndex) {
-      let currentNode = this.head;
-      for (let i = 0; i < index; i++) {
-        currentNode = currentNode.next;
-      }
-      return currentNode.data;
+      return this.list[index];
     } else {
       throw new Error('Error. Wrong index');
     }
   }
 
   clone() {
-    const clone = new MyList();
-    let currentNode = this.head;
-    for (let i = 0; i < this.size; i++) {
-      clone.append(currentNode.data);
-      currentNode = currentNode.next;
-    }
-    return clone;
+    return new MyList(...this.list);
   }
 
   reverse() {
-    const reverseList = new MyList();
-    const size = this.size;
-    for (let i = size - 1; i >= 0; i--) {
-      reverseList.append(this.get(i));
-    }
-    this.clear();
-    for (let i = 0; i < size; i++) {
-      this.append(reverseList.get(i));
-    }
+    this.list.reverse();
   }
 
   findFirst(data) {
     const isString = typeof data === 'string';
     if (isString && data.length === 1) {
-      let currentNode = this.head;
-      for (let i = 0; i < this.size; i++) {
-        if (currentNode.data === data) {
+      for (let i = 0; i < this.length(); i++) {
+        if (this.list[i] === data) {
           return i;
-        } else {
-          currentNode = currentNode.next;
         }
       }
       return -1;
@@ -157,12 +86,9 @@ class MyList {
   findLast(data) {
     const isString = typeof data === 'string';
     if (isString && data.length === 1) {
-      let currentNode = this.tail;
-      for (let i = 0; i < this.size; i++) {
-        if (currentNode.data === data) {
+      for (let i = this.length() - 1; i >= 0; i--) {
+        if (this.list[i] === data) {
           return i;
-        } else {
-          currentNode = currentNode.prev;
         }
       }
       return -1;
@@ -172,19 +98,11 @@ class MyList {
   }
 
   clear() {
-    for (let i = 0; i < this.size;) {
-      this.delete(i);
-    }
+    this.list = [];
   }
 
   extend(list) {
-    const copyList = list.clone();
-    let currentNode = copyList.head;
-    for (let i = 0; i < copyList.size; i++) {
-      this.append(currentNode.data);
-      currentNode = currentNode.next;
-    }
-
+    this.list.push(...list.list);
   }
 }
 
