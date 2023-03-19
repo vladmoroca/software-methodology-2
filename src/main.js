@@ -6,7 +6,7 @@ class MyList {
   }
 
   length() {
-    return this.list.length;
+    return this.list.length + 1;
   }
 
   append(data) {
